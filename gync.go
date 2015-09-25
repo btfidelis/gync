@@ -60,15 +60,7 @@ func main() {
 	app.Name = "Gync"
 	app.Usage = "Keep files and directories synced with in real time"
 
-	app.Flags = []cli.Flag {
-		cli.StringFlag{
-			Name: "lang",
-			Value: "peido",
-			Usage: "peido na cara",
-		},
-	}
-
-	app.Commands = gync.RegisterCommands();
+	app.Commands = RegisterCommands();
 
 	app.Run(os.Args)
 
