@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"github.com/stacktic/dropbox"
 	"github.com/codegangsta/cli"
+	"github.com/btfidelis/gync/core"
 )
 
 var DropboxInfo struct {
@@ -38,7 +39,7 @@ func listenOn(file string) {
 
 }
 
-func main() {
+func Boot() {
 
 	file, err := os.Open("storage/dropbox.json")
 
@@ -60,7 +61,7 @@ func main() {
 	app.Name = "Gync"
 	app.Usage = "Keep files and directories synced with in real time"
 
-	app.Commands = RegisterCommands();
+	app.Commands = core.RegisterCommands();
 
 	app.Run(os.Args)
 

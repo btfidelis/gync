@@ -1,13 +1,31 @@
-package gync 
+package model 
 
 import (
-	"os"
+	"fmt"
+	"regexp/syntax"
 )
 
-type struct Save {
+type Save struct{
 	Name		string
 	Location 	string
 	Dir			bool
+}
+
+
+func (save Save) NewSave(name string, local string) *Save {
+
+}
+
+
+func validateName(name string) bool {
+	matched, err := syntax.MatchString("/[A-Z|a-z|0-9|\\-]/", name)
+
+	if err != nil {
+		return matched
+
+	} else {
+		fmt.Println("You must expecify a name")
+	}
 }
 
 

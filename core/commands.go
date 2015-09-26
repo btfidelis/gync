@@ -1,4 +1,4 @@
-package gync
+package core
 
 import (
 	"fmt"
