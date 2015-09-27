@@ -2,28 +2,50 @@ package core
 
 import "testing"
 import "fmt"
+import "encoding/json"
 
 type user struct {
 	Name string
 	Nickname string
 }
 
+type collection struct {
+	Elements []*user
+}
+
 func TestIOManWrite(t *testing.T) {
-/*	io := NewIOManager("/testing.json")
+	io := NewIOManager("/testing.json")
 
 	u := &user{"Hey", "WuckFaffle"}
-	u1 := &user{"ghost", "butts"}
+	u1 := &user{"BLHA", "FISH"}
 
-	io.SaveObj(u)
-*/}
+	var col collection
+	col.Elements = append(col.Elements, u, u1)
+
+
+	encoded, err := json.Marshal(col)
+
+	if err != nil {
+		t.Errorf("Encoding error")
+	}
+
+	io.SaveObj(encoded)
+}
 
 func TestLoadFile(t *testing.T) {
 	io := NewIOManager("/testing.json")
 
-	var u user;
+	var col collection;
+	colBytes := io.LoadFile() 
 
-	userCol := io.LoadFile(&u)
+	if colBytes == nil {
+		return
+	}
+	err := json.Unmarshal(colBytes, &col)
+	
+	if err != nil {
+		t.Errorf("error decoding: ", err)
+	}
 
-	fmt.Println(user(userCol[0]))
-
+	fmt.Println(*col.Elements[0])
 }

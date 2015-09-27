@@ -41,6 +41,10 @@ func TestNewSaveObject(t *testing.T) {
 			"dark-souls",
 		 	"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dark Souls Prepare to Die Edition",
 		},
+		{
+			"something",
+		 	"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dark Souls Prepare to Die Edition",
+		},
 	}
 
 
@@ -48,6 +52,39 @@ func TestNewSaveObject(t *testing.T) {
 		got := NewSave(c.name, c.local)
 		if got == nil {
 			t.Errorf("Error asserting that is Obj, ", got)
+		}
+	}
+}
+
+
+func TestNewSaveObjectPersist(t *testing.T) {
+	save := NewSave("ShadowOfMordor", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\")
+	save1 := NewSave("Diablo2", "C:\\Games")
+
+	if save == nil || save1 == nil {
+		t.Errorf("Error creating obj")
+		
+	}
+
+	save.Save()
+	save1.Save()
+}
+
+
+func TestValidateUniqueName(t *testing.T) {
+	cases := []struct{
+		name string
+		assert bool
+	}{
+		{"Diablo2", false},
+		{"testing", true},
+	}
+
+	for _, c := range(cases) {
+		got := validateUniqueName(c.name)
+
+		if got != c.assert {
+			t.Errorf("Failed asserting that ", c.assert, "is ", got)
 		}
 	}
 }

@@ -6,8 +6,13 @@ import (
 	"os"
 	"errors"
 	"regexp"
+	"encoding/json"
 	"github.com/btfidelis/gync/core"
 )
+
+type SaveCollection struct {
+	Saves []Save
+}
 
 type Save struct{
 	Name		string
@@ -33,7 +38,9 @@ func NewSave(name string, local string) *Save {
 	return &Save{name, local, file.IsDir()}
 }
 
-
+/**
+ * Validates if the name is unique and valid
+ */
 func validateName(name string) error {
 	regex, err := regexp.Compile("(^[\\w\\-]+$)")
 
@@ -41,18 +48,68 @@ func validateName(name string) error {
 		log.Fatal("invalid regex")
 	}
 
+	if !validateUniqueName(name) {
+		return errors.New("You must enter a unique name (gync list to see used names)")
+	}
+
 	matched := regex.MatchString(name)
 
 	if !matched {
 		return errors.New("You must enter a valid name (Only alphanumeric and \"-\" symbol no spaces)")
-	} 
+	}
 
 	return nil
+}
+
+/**
+ *  Returns true if name is unique
+ */
+func validateUniqueName(name string) bool {
+	saveCol := GetSaveCollection()
+
+	for _, col := range(saveCol.Saves) {
+		if col.Name == name {
+			return false
+		}
+	}
+
+	return true
 }
 
 
 func (save *Save) Save() {
 	io := core.NewIOManager("/saves.json")
-	io.SaveObj(save)
+	saveCol := GetSaveCollection()
+
+	saveCol.Saves = append(saveCol.Saves, *save)
+
+	saves, err := json.Marshal(saveCol)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	io.SaveObj(saves)
 }
+
+func GetSaveCollection() SaveCollection {
+	io := core.NewIOManager("/saves.json")
+	var saveCol SaveCollection
+	saves := io.LoadFile()
+
+	err := json.Unmarshal(saves, &saveCol)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return saveCol
+}
+
+/*func (saveCol SaveCollection) Where(name string, operation string) {
+
+}*/
+
+
+
 

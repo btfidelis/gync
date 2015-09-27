@@ -1,13 +1,12 @@
 package core
 
 import(
-	"encoding/json"
-	"bufio"
+	"io/ioutil"
 	"os"
 	"log"
 )
 
-const storagePath string = "./../storage"
+const storagePath string = "storage"
 
 type IOManager struct {
 	Path string
@@ -17,20 +16,15 @@ func NewIOManager(path string) *IOManager {
 	return &IOManager{path}
 }
 
-func (ioMan *IOManager) SaveObj(obj interface{}) {
-	encoded, err := json.Marshal(obj)
+func (ioMan *IOManager) SaveObj(obj []byte) {
+	
+	f, err := os.OpenFile(storagePath + ioMan.Path, os.O_WRONLY, 0600)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	f, err := os.OpenFile(storagePath + ioMan.Path, os.O_APPEND|os.O_WRONLY, 0600)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err = f.Write(encoded); err != nil {
+	if _, err = f.Write(obj); err != nil {
 		log.Fatal(err)
 	}
 
@@ -39,26 +33,14 @@ func (ioMan *IOManager) SaveObj(obj interface{}) {
 }
 
 
-func (ioMan *IOManager) LoadFile(obj interface{}) []interface{} {
-	file, err := os.OpenFile(storagePath + ioMan.Path, os.O_RDONLY, 0600)
-	objectCol := make([]interface{}, 0)
+func (ioMan *IOManager) LoadFile() []byte {
 
-
+	b, err := ioutil.ReadFile(storagePath + ioMan.Path)
+	
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to open file")
+		return nil
 	}
 
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		err = json.Unmarshal(scanner.Bytes(), obj)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		objectCol = append(objectCol, obj)
-	}
-
-	return objectCol
+	return b
 }
