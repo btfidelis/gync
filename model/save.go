@@ -117,7 +117,7 @@ func (saveCol SaveCollection) Where(name string) (*Save, int) {
 	return nil, -1
 }
 
-func (saveCol SaveCollection) Remove(id int) {
+func (saveCol *SaveCollection) Remove(id int) {
 	io := core.NewIOManager("/saves.json")
 
 	if id != -1 {

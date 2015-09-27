@@ -3,9 +3,7 @@ package core
 import(
 	"path/filepath"
 	"io/ioutil"
-	"os"
 	"log"
-	"fmt"
 )
 
 const storagePath string = "../storage/"
@@ -21,24 +19,16 @@ func NewIOManager(path string) *IOManager {
 func (io IOManager) GetPath() string {
 	dir, _ := filepath.Abs(storagePath + io.Path)
 	
-	fmt.Println(dir)
 	return dir
 }
 
 func (ioMan *IOManager) SaveObj(obj []byte) {
 	
-	f, err := os.OpenFile(storagePath + ioMan.Path, os.O_WRONLY, 0600)
+	err := ioutil.WriteFile(storagePath + ioMan.Path, obj, 0600)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	if _, err = f.Write(obj); err != nil {
-		log.Fatal(err)
-	}
-
-	f.Sync()
-	f.Close()
 }
 
 

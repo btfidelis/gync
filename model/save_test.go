@@ -91,7 +91,7 @@ func TestValidateUniqueName(t *testing.T) {
 
 func TestRemoval(t *testing.T) {
 	saves := GetSaveCollection()
-	save, id := saves.Where("Diablo2")
+	save, id := saves.Where("ShadowOfMordor")
 
 	if save != nil {
 		saves.Remove(id)

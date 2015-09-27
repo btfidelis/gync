@@ -3,9 +3,9 @@ package gync
 import (
 	"os"
 	"fmt"
-	"log"
-	"encoding/json"
-	"github.com/stacktic/dropbox"
+	//"log"
+	//"encoding/json"
+	//"github.com/stacktic/dropbox"
 	"github.com/codegangsta/cli"
 )
 
@@ -39,8 +39,7 @@ func listenOn(file string) {
 }
 
 func Boot() {
-
-	file, err := os.Open("storage/dropbox.json")
+	/*file, err := os.Open("storage/dropbox.json")
 
 	if err != nil {
 		log.Fatal(err)
@@ -55,7 +54,7 @@ func Boot() {
 	dropBox := dropbox.NewDropbox()
 	dropBox.SetAppInfo(DropboxInfo.ClientId, DropboxInfo.ClientSecret)
 	dropBox.SetAccessToken(DropboxInfo.Token)
-
+*/
 	app := cli.NewApp()
 	app.Name = "Gync"
 	app.Usage = "Keep files and directories synced with in real time"
