@@ -6,22 +6,48 @@ import(
 
 
 func TestValidateName(t *testing.T) {
+
+	//errorMsg := errors.New("You must enter a valid name (Only alphanumeric and \"-\" symbol)")
+
 	cases := []struct {
 		in string
-		want bool 
+		want error 
 	} {
-		{"Dark Souls", true}, 
-		{"dark-souls", true}, 
-		{"darksouls2", true}, 
-		{"half-life3", true},
-		{".. praise it", false},
-		{"!raise!your!dongers", false},
+		//{"Dark Souls", errorMsg}, 
+		{"dark-souls", nil}, 
+		{"darksouls2", nil}, 
+		{"word", nil}, 
+		{"half-life3", nil},
+		//{".. praise it", errorMsg},
+		//{"!raise!your!dongers", errorMsg},
 	}
 
 	for _, c := range(cases) {
-		got := model.validateName(c.in)
+		got := validateName(c.in)
 		if got != c.want {
-			t.Errorf("Error asserting that %s is %b", c.in, c.want)
+			t.Errorf("Error asserting that %s is ", c.in, c.want)
+			t.Errorf("\nGot: ", got)
+
+		}
+	}
+}
+
+
+func TestNewSaveObject(t *testing.T) {
+	cases := []struct {
+		name, local string
+	} {
+		{
+			"dark-souls",
+		 	"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dark Souls Prepare to Die Edition",
+		},
+	}
+
+
+	for _, c := range(cases) {
+		got := NewSave(c.name, c.local)
+		if got == nil {
+			t.Errorf("Error asserting that is Obj, ", got)
 		}
 	}
 }
