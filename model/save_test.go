@@ -63,7 +63,7 @@ func TestNewSaveObjectPersist(t *testing.T) {
 
 	if save == nil || save1 == nil {
 		t.Errorf("Error creating obj")
-		
+		return
 	}
 
 	save.Save()
@@ -86,5 +86,16 @@ func TestValidateUniqueName(t *testing.T) {
 		if got != c.assert {
 			t.Errorf("Failed asserting that ", c.assert, "is ", got)
 		}
+	}
+}
+
+func TestRemoval(t *testing.T) {
+	saves := GetSaveCollection()
+	save, id := saves.Where("Diablo2")
+
+	if save != nil {
+		saves.Remove(id)
+	} else {
+		t.Errorf("Failed deleting, not found")
 	}
 }

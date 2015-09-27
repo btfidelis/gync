@@ -106,10 +106,31 @@ func GetSaveCollection() SaveCollection {
 	return saveCol
 }
 
-/*func (saveCol SaveCollection) Where(name string, operation string) {
+func (saveCol SaveCollection) Where(name string) (*Save, int) {
+	
+	for i, save := range(saveCol.Saves) {
+		if (save.Name == name) {
+			return &save, i
+		}
+	}
 
-}*/
+	return nil, -1
+}
 
+func (saveCol SaveCollection) Remove(id int) {
+	io := core.NewIOManager("/saves.json")
 
+	if id != -1 {
+		saveCol.Saves = append(saveCol.Saves[:id], saveCol.Saves[id+1:]...)
+	}
+
+	saves, err := json.Marshal(saveCol)
+
+	if err != nil {
+		log.Fatal("On Delete:", err)
+	}
+
+	io.SaveObj(saves)
+}
 
 
