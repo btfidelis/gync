@@ -11,3 +11,11 @@ type struct Save {
 }
 
 
+func (Save save) NewSave(name string, local string) *Save {
+	
+}
+
+
+func validateName(name string) {
+
+}
