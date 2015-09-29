@@ -2,7 +2,7 @@ package gync
 
 import (
 	"os"
-	"fmt"
+	//"fmt"
 	"github.com/codegangsta/cli"
 )
 
@@ -15,7 +15,5 @@ func Boot() {
 	app.Commands = RegisterCommands();
 
 	app.Run(os.Args)
-
-
 }
 
