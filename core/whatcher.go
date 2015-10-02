@@ -9,8 +9,7 @@ import (
 )
 
 type Watcher struct {
-	ModTimes 	[]time.Time
-	Name		string
+	ModTimes 	map[string]time.Time
 }
 
 /**
@@ -37,6 +36,20 @@ func (w Watcher) ObserveFile(file string) {
 	}
 }
 
+func (w *Watcher) WalkCheck(path string, info os.FileInfo, err error) error {
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	if ! w.ModTimes[path].Equal(info.ModTime()) {
+		fmt.Println(info.Name(), " changed")
+		w.ModTimes[path] = info.ModTime()
+	}
+
+
+	return err
+}
 func (w *Watcher) WalkPopulate(path string, info os.FileInfo, err error) error {
 
 	if err != nil {
@@ -44,56 +57,41 @@ func (w *Watcher) WalkPopulate(path string, info os.FileInfo, err error) error {
 		return err
 	}
 
-	w.ModTimes = make([]time.Time, 0)
-	w.ModTimes = append(w.ModTimes, info.ModTime())
+	
+	w.ModTimes[path] = info.ModTime()
 
 	return err
 }
 
 func (w *Watcher) ObserveDir(path string) {
-	err := filepath.Walk(path, w.WalkPopulate)
-	mirror := new(Watcher) 
+	w.ModTimes = make(map[string]time.Time, 0)
 	
-	if err != nil {
-		log.Fatal("ON DAEMON: ", err)
+	error := filepath.Walk(path, w.WalkPopulate)
+	mirror := new(Watcher)
+	
+	
+	if error != nil {
+		log.Fatal("ON DAEMON: ", error)
 		return
 	}
 
-	mirror.ModTimes = make([]time.Time, len(w.ModTimes))
+	mirror.ModTimes = make(map[string]time.Time, 0)
+	error = filepath.Walk(path, mirror.WalkPopulate)
 
-	copy(mirror.ModTimes, w.ModTimes)
+	if error != nil {
+		log.Fatal("ON DAEMON: ", error)
+		return	
+	}
 	
 	for {
-		err := filepath.Walk(path, mirror.WalkPopulate)
+		err := filepath.Walk(path, w.WalkCheck)
 		
 		if err != nil {
 			log.Fatal("ON DAEMON: ", err)
 			return
 		}
 
-		if w.check(mirror.ModTimes) {
-			fmt.Println("alterado")
-			copy(w.ModTimes, mirror.ModTimes)		
-		}
-
-		mirror.ModTimes = make([]time.Time, len(w.ModTimes), len(w.ModTimes))
+		time.Sleep(time.Second * 2)
 	}
 }
-
-func (w *Watcher) check(mirror []time.Time) bool {
-	if len(w.ModTimes) != len(mirror) {
-		fmt.Println(len(w.ModTimes)," != ", len(mirror))
-		return true
-	}
-
-	for i := 0; i < len(mirror); i++ {
-		if ! w.ModTimes[i].Equal(mirror[i]) {
-			fmt.Println(w.ModTimes[i]," != ", mirror[i])
-			return true
-		}
-	}
-
-	return false
-}
-
 
