@@ -43,20 +43,21 @@ func (w *Watcher) WalkCheck(path string, info os.FileInfo, err error) error {
 	}
 
 	if ! w.ModTimes[path].Equal(info.ModTime()) {
-		fmt.Println(info.Name(), " changed")
+		fmt.Println(info.Name(), "coping files :", path)
 		w.ModTimes[path] = info.ModTime()
+		
+		w.sync(path)
 	}
-
 
 	return err
 }
+
 func (w *Watcher) WalkPopulate(path string, info os.FileInfo, err error) error {
 
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
-
 	
 	w.ModTimes[path] = info.ModTime()
 
@@ -95,3 +96,26 @@ func (w *Watcher) ObserveDir(path string) {
 	}
 }
 
+func (w *Watcher) sync(path string) {
+	// if file was renamed, if file was moved, if file was deleted
+	fmt.Println("syncing: ", path)
+	i, err := os.Stat(path);
+
+	if err != nil {
+		log.Println("Error Sync: ", err)
+	}
+
+	if i.IsDir() {	
+		for dir, _:= range(w.ModTimes) {
+
+			if _,err := os.Stat(dir); os.IsNotExist(err) {
+				fmt.Println("arquivo removido ou movido ou renomeado: ", dir)
+				delete(w.ModTimes, dir)
+			}
+		}
+	}
+}
+
+func (w *Watcher) copy() {
+	
+}
