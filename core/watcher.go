@@ -124,11 +124,30 @@ func (w *Watcher) sync(path string) {
 		w.ModFiles[path] = MODIFIED
 	}
 
+	go w.copy()
+
 	fmt.Println(w.ModFiles)
 }
 
 func (w *Watcher) copy() {
 	for path, val := range(w.ModFiles) {
-		
+
+		switch val {
+			MODIFIED:
+				err := CopyFile(path, COPY_PATH + filepath.Clean(path))
+				if err != nil {
+					log.Println("error sync: ", err)
+				}
+				break
+			DELETED:
+				err := os.Remove()
+				if err != nil {
+					log.Println("error sync: ", err)
+				}
+				break
+		}
+
+		delete(w.ModFiles, path)
 	}
+
 }
