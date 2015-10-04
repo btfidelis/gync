@@ -8,8 +8,14 @@ import (
 	"path/filepath"
 )
 
+const (
+	DELETED 	=	iota
+	MODIFIED	=	iota
+)
+
 type Watcher struct {
 	ModTimes 	map[string]time.Time
+	ModFiles	map[string]uint32
 }
 
 /**
@@ -109,13 +115,20 @@ func (w *Watcher) sync(path string) {
 		for dir, _:= range(w.ModTimes) {
 
 			if _,err := os.Stat(dir); os.IsNotExist(err) {
-				fmt.Println("arquivo removido ou movido ou renomeado: ", dir)
+				fmt.Println("moved or renamed: ", dir)
 				delete(w.ModTimes, dir)
+				w.ModFiles[dir] = DELETED
 			}
 		}
+	} else {
+		w.ModFiles[path] = MODIFIED
 	}
+
+	fmt.Println(w.ModFiles)
 }
 
 func (w *Watcher) copy() {
-	
+	for path, val := range(w.ModFiles) {
+		
+	}
 }
