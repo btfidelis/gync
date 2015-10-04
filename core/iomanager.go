@@ -9,7 +9,6 @@ import(
 	"fmt"
 )
 
-const STORAGE string = "../storage/"
 const COPY_PATH = "C:\\Users\\Bruno\\Dropbox\\.gync"
 
 type IOManager struct {
@@ -21,14 +20,14 @@ func NewIOManager(path string) *IOManager {
 }
 
 func (io IOManager) GetPath() string {
-	dir, _ := filepath.Abs(STORAGE + io.Path)
+	dir, _ := filepath.Abs(io.Path)
 	
 	return dir
 }
 
 func (ioMan *IOManager) SaveObj(obj []byte) {
 	
-	err := ioutil.WriteFile(STORAGE + ioMan.Path, obj, 0600)
+	err := ioutil.WriteFile(ioMan.Path, obj, 0600)
 
 	if err != nil {
 		log.Fatal(err)
