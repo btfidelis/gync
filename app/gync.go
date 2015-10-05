@@ -6,6 +6,8 @@ import (
 )
 
 func Boot() {
+	
+	
 	app := cli.NewApp()
 	app.Name = "Gync"
 	app.Usage = "Keep files and directories synced with in real time"

@@ -32,7 +32,7 @@ func NewSave(name string, local string) *Save {
 	}
 
 	if errPath != nil {
-		fmt.Println(errPath)
+		fmt.Println("The path provided does not exist")
 		return nil
 	}
 

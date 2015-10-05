@@ -39,7 +39,7 @@ func (ioMan *IOManager) LoadFile() []byte {
 	b, err := ioutil.ReadFile(ioMan.GetPath())
 	
 	if err != nil {
-		log.Fatal("Unable to open file")
+		log.Fatal("Unable to open file: ", err)
 		return nil
 	}
 
@@ -107,4 +107,18 @@ func copyFileContents(srcPath string, destPath string) error {
 	}
 
 	return destFile.Sync()
+}
+
+func (ioMan *IOManager) putEmptyJson(path string) {
+	err := ioutil.WriteFile(path, byte("{}"), 0600)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (ioMan *IOManager) InitializeCol() {
+	if _,err := os.Stat(ioMan.GetPath()); os.IsNotExist(err) {
+		ioMan.putEmptyJson()
+	}
 }
