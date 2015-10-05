@@ -1,4 +1,4 @@
-package gync
+package app
 
 import (
 	"fmt"

@@ -9,7 +9,7 @@ import(
 	"fmt"
 )
 
-const COPY_PATH = "C:\\Users\\Bruno\\Dropbox\\.gync"
+//const COPY_PATH = "C:\\Users\\Bruno\\Dropbox\\.gync"
 
 type IOManager struct {
 	Path string

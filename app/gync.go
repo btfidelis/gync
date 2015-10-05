@@ -1,10 +1,9 @@
-package gync 
+package app 
 
 import (
 	"os"
 	"github.com/codegangsta/cli"
 )
-
 
 func Boot() {
 	app := cli.NewApp()

@@ -1,4 +1,4 @@
-package core
+package app
 
 import (
 	"os"
@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 	"path/filepath"
+	"github.com/btfidelis/gync/model"
+	"github.com/btfidelis/gync/core"
 )
 
 const (
@@ -15,7 +17,7 @@ const (
 
 type Watcher struct {
 	ModTimes 	map[string]time.Time
-	ModFiles	map[string]uint32
+	ModFiles	map[string]int
 }
 
 /**
@@ -135,7 +137,7 @@ func (w *Watcher) copy() {
 		switch val {
 
 			case MODIFIED:
-				err := CopyFile(path, filepath.Join(COPY_PATH, filepath.Clean(path)))
+				err := core.CopyFile(path, filepath.Join(model.GetConfig().BackupPath, filepath.Clean(path)))
 				if err != nil {
 					log.Println("error sync: ", err)
 				}
@@ -151,5 +153,11 @@ func (w *Watcher) copy() {
 
 		delete(w.ModFiles, path)
 	}
+}
 
+
+func initDirectories() {
+	saves := model.GetSaveCollection()
+
+	fmt.Println(saves)
 }

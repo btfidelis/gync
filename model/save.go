@@ -138,6 +138,3 @@ func (saveCol *SaveCollection) Remove(id int) {
 
 	io.SaveObj(saves)
 }
-
-
->>>>>>> b9b43fdb3331165d725211a9c00eae09ba0ed0ac

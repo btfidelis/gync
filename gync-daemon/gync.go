@@ -1,9 +1,9 @@
 package main 
 
 import(
-	"github.com/btfidelis/gync"
+	"github.com/btfidelis/gync/app"
 )
 
 func main() {
-	gync.Boot()
+	app.Boot()
 }
