@@ -49,3 +49,11 @@ func TestLoadFile(t *testing.T) {
 
 	fmt.Println(*col.Elements[0])
 }
+
+func TestCopyFile(t *testing.T) {
+	err := CopyFile("../t/copy_test.txt", "../t/t/copiatest2.txt")
+
+	if err != nil {
+		t.Errorf("error: ", err)
+	}
+}

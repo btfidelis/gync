@@ -2,7 +2,6 @@ package gync
 
 import (
 	"os"
-	//"fmt"
 	"github.com/codegangsta/cli"
 )
 

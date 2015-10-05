@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
+	"runtime"
 	"errors"
 	"regexp"
 	"encoding/json"
@@ -35,6 +37,11 @@ func NewSave(name string, local string) *Save {
 	}
 
 	return &Save{name, local, file.IsDir()}
+}
+
+func getSaveLocal() string {
+	_, file, _, _ := runtime.Caller(1)
+	return path.Join(path.Dir(file), "../storage/saves.json")
 }
 
 /**
@@ -77,7 +84,7 @@ func validateUniqueName(name string) bool {
 
 
 func (save *Save) Save() {
-	io := core.NewIOManager("/saves.json")
+	io := core.NewIOManager(getSaveLocal())
 	saveCol := GetSaveCollection()
 
 	saveCol.Saves = append(saveCol.Saves, *save)
@@ -92,7 +99,7 @@ func (save *Save) Save() {
 }
 
 func GetSaveCollection() SaveCollection {
-	io := core.NewIOManager("/saves.json")
+	io := core.NewIOManager(getSaveLocal())
 	var saveCol SaveCollection
 	saves := io.LoadFile()
 
@@ -117,7 +124,7 @@ func (saveCol SaveCollection) Where(name string) (*Save, int) {
 }
 
 func (saveCol *SaveCollection) Remove(id int) {
-	io := core.NewIOManager("/saves.json")
+	io := core.NewIOManager(getSaveLocal())
 
 	if id != -1 {
 		saveCol.Saves = append(saveCol.Saves[:id], saveCol.Saves[id+1:]...)
