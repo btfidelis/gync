@@ -23,7 +23,7 @@ type Watcher struct {
 /**
  * Observe file
  */
-func (w Watcher) ObserveFile(file string) {
+func (w Watcher) ObserveFile(file string, changed chan bool) {
 	info, err := os.Stat(file)
 
 	if err == nil {
@@ -36,10 +36,13 @@ func (w Watcher) ObserveFile(file string) {
 			if err == nil {
 
 				if info.ModTime().After(lastChangedOn) {
-					fmt.Println("arquivo alterado: ", info.Name())
 					lastChangedOn = info.ModTime()
+					changed <- true
 				}
 			}
+
+			changed <- false
+			time.Sleep(time.Second * 2)
 		}
 	}
 }
@@ -155,9 +158,8 @@ func (w *Watcher) copy() {
 	}
 }
 
-
 func initDirectories() {
-	saves := model.GetSaveCollection()
+	col := model.GetSaveCollection()
 
-	fmt.Println(saves)
+	fmt.Println(col.Saves[len(col.Saves)])
 }

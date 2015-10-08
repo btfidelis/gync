@@ -39,7 +39,7 @@ func NewSave(name string, local string) *Save {
 	return &Save{name, local, file.IsDir()}
 }
 
-func getSaveLocal() string {
+func GetSaveLocal() string {
 	_, file, _, _ := runtime.Caller(1)
 	return path.Join(path.Dir(file), "../storage/saves.json")
 }
@@ -84,7 +84,7 @@ func validateUniqueName(name string) bool {
 
 
 func (save *Save) Save() {
-	io := core.NewIOManager(getSaveLocal())
+	io := core.NewIOManager(GetSaveLocal())
 	saveCol := GetSaveCollection()
 
 	saveCol.Saves = append(saveCol.Saves, *save)
@@ -99,7 +99,7 @@ func (save *Save) Save() {
 }
 
 func GetSaveCollection() SaveCollection {
-	io := core.NewIOManager(getSaveLocal())
+	io := core.NewIOManager(GetSaveLocal())
 	var saveCol SaveCollection
 	saves := io.LoadFile()
 
@@ -124,7 +124,7 @@ func (saveCol SaveCollection) Where(name string) (*Save, int) {
 }
 
 func (saveCol *SaveCollection) Remove(id int) {
-	io := core.NewIOManager(getSaveLocal())
+	io := core.NewIOManager(GetSaveLocal())
 
 	if id != -1 {
 		saveCol.Saves = append(saveCol.Saves[:id], saveCol.Saves[id+1:]...)

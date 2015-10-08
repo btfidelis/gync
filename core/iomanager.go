@@ -110,7 +110,7 @@ func copyFileContents(srcPath string, destPath string) error {
 }
 
 func (ioMan *IOManager) putEmptyJson(path string) {
-	err := ioutil.WriteFile(path, byte("{}"), 0600)
+	err := ioutil.WriteFile(path, []byte("{}"), 0600)
 
 	if err != nil {
 		log.Fatal(err)
@@ -118,7 +118,7 @@ func (ioMan *IOManager) putEmptyJson(path string) {
 }
 
 func (ioMan *IOManager) InitializeCol() {
-	if _,err := os.Stat(ioMan.GetPath()); os.IsNotExist(err) {
-		ioMan.putEmptyJson()
-	}
+	// if _,err := os.Stat(ioMan.GetPath()); os.IsNotExist(err) {
+	// 	ioMan.putEmptyJson()
+	// }
 }
