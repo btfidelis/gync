@@ -16,7 +16,7 @@ func main() {
 	}
 
 	saveChange := make(chan bool)
-	saveCol := model.GetSaveCollection()
+	//saveCol := model.GetSaveCollection()
 
 	saveFileWatcher := app.Watcher{
 		ModTimes: make(map[string]time.Time, 0),
@@ -24,8 +24,6 @@ func main() {
 	}
 
 	go saveFileWatcher.ObserveFile(model.GetSaveLocal(), saveChange)
-
-	
 	
 	for {
 		if <-saveChange {

@@ -59,5 +59,14 @@ func RegisterCommands() []cli.Command {
 				}
 			},
 		},
+		{
+			Name:	    "start",
+			Aliases:    nil,
+			Usage:		"Starts gync as a daemon",
+			Action:	func (c *cli.Context) {
+				fmt.Println("Starting daemon...")
+				STARTDAEMON = true
+			},
+		},
 	}
 }

@@ -9,8 +9,6 @@ import (
 var STARTDAEMON bool
 
 func Boot() {
-	flag.BoolVar(&STARTDAEMON, "daemon", false, "start gync deamon")
-
 	app := cli.NewApp()
 	app.Name = "Gync"
 	app.Usage = "Keep files and directories synced with in real time"
