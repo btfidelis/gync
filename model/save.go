@@ -36,6 +36,10 @@ func NewSave(name string, local string) *Save {
 		return nil
 	}
 
+	conf := GetConfig()
+
+	core.InitDirectory(name, conf.BackupPath)
+
 	return &Save{name, local, file.IsDir()}
 }
 

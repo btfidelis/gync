@@ -117,8 +117,17 @@ func (ioMan *IOManager) putEmptyJson(path string) {
 	}
 }
 
-func (ioMan *IOManager) InitializeCol() {
-	// if _,err := os.Stat(ioMan.GetPath()); os.IsNotExist(err) {
-	// 	ioMan.putEmptyJson()
-	// }
+func InitDirectory(name string, dir string) {
+	if _,err := os.Stat(filepath.Join(dir, name)); os.IsNotExist(err) {
+
+		err := os.MkdirAll(filepath.Join(dir, name), 0777)
+	
+		if err != nil {
+			log.Fatal("failed to initialize directory: ", err)
+		}
+	}
+}
+
+func CopyDirContents() {
+	
 }

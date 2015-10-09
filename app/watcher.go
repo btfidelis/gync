@@ -66,7 +66,7 @@ func (w *Watcher) WalkCheck(path string, info os.FileInfo, err error) error {
 func (w *Watcher) WalkPopulate(path string, info os.FileInfo, err error) error {
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return err
 	}
 	
@@ -83,7 +83,7 @@ func (w *Watcher) ObserveDir(path string) {
 	
 	
 	if error != nil {
-		log.Fatal("ON DAEMON: ", error)
+		log.Println("ON DAEMON: ", error)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (w *Watcher) ObserveDir(path string) {
 	error = filepath.Walk(path, mirror.WalkPopulate)
 
 	if error != nil {
-		log.Fatal("ON DAEMON: ", error)
+		log.Println("ON DAEMON: ", error)
 		return	
 	}
 	
@@ -99,7 +99,7 @@ func (w *Watcher) ObserveDir(path string) {
 		err := filepath.Walk(path, w.WalkCheck)
 		
 		if err != nil {
-			log.Fatal("ON DAEMON: ", err)
+			log.Println("ON DAEMON: ", err)
 			return
 		}
 
@@ -156,10 +156,4 @@ func (w *Watcher) copy() {
 
 		delete(w.ModFiles, path)
 	}
-}
-
-func initDirectories() {
-	col := model.GetSaveCollection()
-
-	fmt.Println(col.Saves[len(col.Saves)])
 }

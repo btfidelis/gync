@@ -22,8 +22,6 @@ func RegisterCommands() []cli.Command {
 
 				if save != nil {
 					save.Save()
-				} else {
-					fmt.Println("Unable to add game")
 				}
 			},
 		},

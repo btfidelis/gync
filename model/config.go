@@ -1,12 +1,10 @@
 package model
 
 import (
-	"fmt"
 	"runtime"
 	"path"
 	"log"
 	"encoding/json"
-	//"path/filepath"
 	"github.com/btfidelis/gync/core"
 )
 
@@ -21,11 +19,9 @@ func GetConfig() Config {
 	_, file, _, _ := runtime.Caller(1)
 	configPath := path.Join(path.Dir(file), CONFIG_FILE)
 	io := core.NewIOManager(configPath)
-
-	fmt.Println(configPath)
 	configStruct := Config{}
 	
-	config := io.LoadFile()
+	config := io.LoadFile()	
 
 	err := json.Unmarshal(config, &configStruct)
 

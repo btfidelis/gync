@@ -16,7 +16,7 @@ func main() {
 	}
 
 	saveChange := make(chan bool)
-	//saveCol := model.GetSaveCollection()
+	saveCol := model.GetSaveCollection()
 
 	saveFileWatcher := app.Watcher{
 		ModTimes: make(map[string]time.Time, 0),
@@ -24,10 +24,16 @@ func main() {
 	}
 
 	go saveFileWatcher.ObserveFile(model.GetSaveLocal(), saveChange)
+
+	fileWatchers := make([]app.Watcher, len(saveCol.Saves))
+	
+	for i, watch := range(fileWatchers) {
+		go watch.ObserveDir(saveCol.Saves[i].Location)
+	}
 	
 	for {
 		if <-saveChange {
-			fmt.Println("save file changed")
-		}	
+			fmt.Println("changed")
+		}
 	}
 }
