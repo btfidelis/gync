@@ -112,6 +112,7 @@ func (w *Watcher) ObserveDir(save model.Save) {
 
 func (w *Watcher) sync(path string) {
 	// if file was renamed, if file was moved, if file was deleted
+	backup := model.GetConfig().BackupPath
 	fmt.Println("syncing: ", path)
 	i, err := os.Stat(path);
 
@@ -119,8 +120,24 @@ func (w *Watcher) sync(path string) {
 		log.Println("Error Sync: ", err)
 	}
 
-	if i.IsDir() {	
-		fmt.Println(w.ModFiles)
+
+	if i.IsDir() {
+
+		destination, err := filepath.Rel(w.Dir, path)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		if _, err = os.Stat(filepath.Join(filepath.Join(backup, w.Root), destination)); os.IsNotExist(err) {
+			
+			err := os.Mkdir(filepath.Join(filepath.Join(backup, w.Root), destination), 0777)
+
+			if err != nil {
+				log.Println("New dir: ",  err)
+			}
+		} 
+
 		for dir, _:= range(w.ModTimes) {
 
 			if _,err := os.Stat(dir); os.IsNotExist(err) {
@@ -134,7 +151,7 @@ func (w *Watcher) sync(path string) {
 		w.ModFiles[path] = MODIFIED
 	}
 
-	go w.copy(model.GetConfig().BackupPath)
+	go w.copy(backup)
 
 }
 
