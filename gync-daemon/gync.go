@@ -40,7 +40,7 @@ func main() {
 	
 	for {
 		if <-saveChange {
-			fmt.Println("changed")
+			fmt.Println("Please restart the deamon if you want to commit the changes")
 		}
 	}
 }
