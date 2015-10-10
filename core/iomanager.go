@@ -128,6 +128,64 @@ func InitDirectory(name string, dir string) {
 	}
 }
 
-func CopyDirContents() {
-	
+func CopyDirContents(src string, dst string) error {
+	if _,err := os.Stat(src); os.IsNotExist(err) {
+		return err
+	}
+
+	err := filepath.Walk(src, func (path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relativePath, err := filepath.Rel(src, path)
+
+		if err != nil {
+			return err
+		}
+
+		destination := filepath.Join(dst, relativePath)
+
+		if info.IsDir() {
+			err := os.MkdirAll(destination, 0777)
+
+			if err != nil {
+				DeleteDir(destination)
+				log.Fatal(err)
+			}
+		} else {
+			err := CopyFile(path, destination)
+
+			if err != nil {
+				DeleteDir(destination)
+				log.Fatal(err)
+			}
+		}
+		
+		return err
+	})
+
+	return err
+}
+
+func DeleteDir(path string) {
+	info, err := os.Stat(path)
+
+	if err != nil {
+		log.Fatal("Error deleting: ",  err)
+	}
+
+	if info.IsDir() {
+		err := os.RemoveAll(path)
+
+		if err != nil {
+			log.Fatal("Error deleting: ",  err)
+		}		
+	} else {
+		err := os.Remove(path)
+		
+		if err != nil {
+			log.Fatal("Error deleting: ",  err)
+		}		
+	}
 }

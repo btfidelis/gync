@@ -39,6 +39,7 @@ func NewSave(name string, local string) *Save {
 	conf := GetConfig()
 
 	core.InitDirectory(name, conf.BackupPath)
+	core.CopyDirContents(local, path.Join(conf.BackupPath, name))
 
 	return &Save{name, local, file.IsDir()}
 }

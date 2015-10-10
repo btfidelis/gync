@@ -28,7 +28,14 @@ func main() {
 	fileWatchers := make([]app.Watcher, len(saveCol.Saves))
 	
 	for i, watch := range(fileWatchers) {
-		go watch.ObserveDir(saveCol.Saves[i].Location)
+		watch = app.Watcher{
+			ModTimes: make(map[string]time.Time, 0),
+			ModFiles: make(map[string]int, 0),
+			Dir:	  saveCol.Saves[i].Location,
+			Root:	  saveCol.Saves[i].Name,
+		}
+
+		go watch.ObserveDir(saveCol.Saves[i])
 	}
 	
 	for {
