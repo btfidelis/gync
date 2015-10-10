@@ -141,10 +141,10 @@ func (w *Watcher) sync(path string) {
 func (w *Watcher) copy(dest string) {
 	for path, val := range(w.ModFiles) {
 
+		destination, err := filepath.Rel(w.Dir, path)
+		
 		switch val {
-
 			case MODIFIED:
-				destination, err := filepath.Rel(w.Dir, path)
 
 				if err != nil {
 					log.Println("error sync: ", err)
@@ -157,8 +157,12 @@ func (w *Watcher) copy(dest string) {
 				}
 
 				if file.IsDir() {
-					os.Mkdir(filepath.Join(filepath.Join(dest, w.Root), destination), 0777)
-					
+					err := os.Mkdir(filepath.Join(filepath.Join(dest, w.Root), destination), 0777)
+					fmt.Println("coping dir: ", filepath.Join(filepath.Join(dest, w.Root), destination))
+				
+					if err != nil {
+						log.Println("error sync: ", err)
+					}
 				} else {
 					err := core.CopyFile(path, filepath.Join(filepath.Join(dest, w.Root), destination))
 					
@@ -170,7 +174,7 @@ func (w *Watcher) copy(dest string) {
 				break
 
 			case DELETED:
-				err := os.Remove(path)
+				err := os.Remove(filepath.Join(filepath.Join(dest, w.Root), destination))
 				
 				if err != nil {
 					log.Println("error sync: ", err)
