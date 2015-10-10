@@ -40,6 +40,17 @@ Change the values of the config.json keys as needed (at the moment check interva
 }
 ```
 
+Now you can add the save game directory
+```sh
+$ gync add GameName "C:\Path\To\Save"
+```
+
+And start the deamon, witch will listen for changes in the save dir and replicate to your dropbox
+
+```sh
+$ gync start
+```
+
 ## Third-Party Dependencies
 * [CLI](https://github.com/codegangsta/cli) :  A small package for building command line apps in Go
 * [CLI-TABLE](https://github.com/crackcomm/go-clitable) : Command line (ASCII) and Markdown table for Golang
