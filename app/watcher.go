@@ -191,7 +191,7 @@ func (w *Watcher) copy(dest string) {
 				break
 
 			case DELETED:
-				err := os.Remove(filepath.Join(filepath.Join(dest, w.Root), destination))
+				err := os.RemoveAll(filepath.Join(filepath.Join(dest, w.Root), destination))
 				
 				if err != nil {
 					log.Println("error sync: ", err)
