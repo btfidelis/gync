@@ -45,7 +45,7 @@ Now you can add the save game directory
 $ gync add GameName "C:\Path\To\Save"
 ```
 
-And start the deamon, witch will listen for changes in the save dir and replicate to your dropbox
+And start the daemon, witch will listen for changes in the save dir and replicate to your dropbox
 
 ```sh
 $ gync start
@@ -60,6 +60,7 @@ $ gync start
 * Refactoring
 * Add the functionality to restore saves
 * Add the functionality to create profiles ("git like branches")
+* Implementation with dropbox api
 
 ## Contribuiting
 I am quite new to golang, so if you have any suggestions or you can help with some of the todo itens, feel free to open a feature issue. Please describe the new feature as well as implementation ideas.
