@@ -7,8 +7,8 @@ import(
 func TestGetConfig(t *testing.T) {
 	conf := GetConfig()
 
-	if conf.BackupPath != "C:\\Users\\Bruno\\Dropbox" {
-		t.Errorf("Fail to read conf: %s is not equal to C:\\Users\\Bruno\\Dropbox", conf.BackupPath)
+	if conf.BackupPath != "C:\\Some\\Path\\To\\Dropbox" {
+		t.Errorf("Fail to read conf: %s is not equal to C:\\Some\\Path\\To\\Dropbox", conf.BackupPath)
 	}
 
 	if conf.CheckInterval != 2 {
