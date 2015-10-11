@@ -46,6 +46,7 @@ func (w Watcher) ObserveFile(file string, changed chan bool) {
 	}
 }
 
+// Func used on ObservDir, listens for changes on files
 func (w *Watcher) walkCheck(path string, info os.FileInfo, err error) error {
 	if err != nil {
 		log.Println(err)
@@ -62,6 +63,7 @@ func (w *Watcher) walkCheck(path string, info os.FileInfo, err error) error {
 	return err
 }
 
+// Func used on ObservDir, popule de ModTimes
 func (w *Watcher) walkPopulate(path string, info os.FileInfo, err error) error {
 
 	if err != nil {
@@ -117,8 +119,8 @@ func (w *Watcher) sync(path string) {
 
 		if _, err = os.Stat(w.getDestinationPath(path)); os.IsNotExist(err) {
 		
+			fmt.Println("new directory: ", path)	
 			w.ModFiles[path] = NEWDIR
-			fmt.Println("new directory: ", path)
 		} 
 		
 		for dir, _:= range(w.ModTimes) {
@@ -150,7 +152,7 @@ func (w *Watcher) copy() {
 				if err != nil {
 					log.Println("New dir: ",  err)
 				}
-			break
+				break
 
 			case MODIFIED:
 				
@@ -159,7 +161,7 @@ func (w *Watcher) copy() {
 				if err != nil {
 					log.Println("error sync: ", err)
 				}
-			break
+				break
 
 			case DELETED:
 				err := os.RemoveAll(destPath)
