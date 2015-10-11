@@ -13,6 +13,7 @@ import (
 const (
 	DELETED 	=	iota
 	MODIFIED	=	iota
+	NEWDIR		=   iota
 )
 
 type Watcher struct {
@@ -22,9 +23,6 @@ type Watcher struct {
 	Root		string
 }
 
-/**
- * Observe file
- */
 func (w Watcher) ObserveFile(file string, changed chan bool) {
 	info, err := os.Stat(file)
 
@@ -49,7 +47,7 @@ func (w Watcher) ObserveFile(file string, changed chan bool) {
 	}
 }
 
-func (w *Watcher) WalkCheck(path string, info os.FileInfo, err error) error {
+func (w *Watcher) walkCheck(path string, info os.FileInfo, err error) error {
 	if err != nil {
 		log.Println(err)
 		return err
@@ -66,7 +64,7 @@ func (w *Watcher) WalkCheck(path string, info os.FileInfo, err error) error {
 	return err
 }
 
-func (w *Watcher) WalkPopulate(path string, info os.FileInfo, err error) error {
+func (w *Watcher) walkPopulate(path string, info os.FileInfo, err error) error {
 
 	if err != nil {
 		log.Println(err)
@@ -81,7 +79,7 @@ func (w *Watcher) WalkPopulate(path string, info os.FileInfo, err error) error {
 func (w *Watcher) ObserveDir(save model.Save) {
 	w.ModTimes = make(map[string]time.Time, 0)
 	
-	error := filepath.Walk(save.Location, w.WalkPopulate)
+	error := filepath.Walk(save.Location, w.walkPopulate)
 	mirror := new(Watcher)
 	
 	
@@ -91,7 +89,7 @@ func (w *Watcher) ObserveDir(save model.Save) {
 	}
 
 	mirror.ModTimes = make(map[string]time.Time, 0)
-	error = filepath.Walk(save.Location, mirror.WalkPopulate)
+	error = filepath.Walk(save.Location, mirror.walkPopulate)
 
 	if error != nil {
 		log.Println("ON DAEMON: ", error)
@@ -99,7 +97,7 @@ func (w *Watcher) ObserveDir(save model.Save) {
 	}
 	
 	for {
-		err := filepath.Walk(save.Location, w.WalkCheck)
+		err := filepath.Walk(save.Location, w.walkCheck)
 		
 		if err != nil {
 			log.Println("ON DAEMON: ", err)
@@ -128,16 +126,12 @@ func (w *Watcher) sync(path string) {
 		if err != nil {
 			log.Println(err)
 		}
-
+		
 		if _, err = os.Stat(filepath.Join(filepath.Join(backup, w.Root), destination)); os.IsNotExist(err) {
-			
-			err := os.Mkdir(filepath.Join(filepath.Join(backup, w.Root), destination), 0777)
-
-			if err != nil {
-				log.Println("New dir: ",  err)
-			}
+		
+			w.ModFiles[path] = NEWDIR
 		} 
-
+		
 		for dir, _:= range(w.ModTimes) {
 
 			if _,err := os.Stat(dir); os.IsNotExist(err) {
@@ -158,40 +152,34 @@ func (w *Watcher) sync(path string) {
 func (w *Watcher) copy(dest string) {
 	for path, val := range(w.ModFiles) {
 
-		destination, err := filepath.Rel(w.Dir, path)
+		relBackupPath, err := filepath.Rel(w.Dir, path)
+
+		if err != nil {
+			log.Println("error sync: ", err)
+		}
+		
+		destPath := filepath.Join(filepath.Join(dest, w.Root), relBackupPath)
 		
 		switch val {
+			case NEWDIR:
+				err := os.Mkdir(destPath, 0777)
+
+				if err != nil {
+					log.Println("New dir: ",  err)
+				}
+			break
+
 			case MODIFIED:
-
-				if err != nil {
-					log.Println("error sync: ", err)
-				}
-
-				file, err := os.Stat(path)
-
-				if err != nil {
-					log.Println("error sync: ", err)
-				}
-
-				if file.IsDir() {
-					err := os.Mkdir(filepath.Join(filepath.Join(dest, w.Root), destination), 0777)
-					fmt.Println("coping dir: ", filepath.Join(filepath.Join(dest, w.Root), destination))
 				
-					if err != nil {
-						log.Println("error sync: ", err)
-					}
-				} else {
-					err := core.CopyFile(path, filepath.Join(filepath.Join(dest, w.Root), destination))
-					
-					if err != nil {
-						log.Println("error sync: ", err)
-					}
+				err := core.CopyFile(path, destPath)
+				
+				if err != nil {
+					log.Println("error sync: ", err)
 				}
-
-				break
+			break
 
 			case DELETED:
-				err := os.RemoveAll(filepath.Join(filepath.Join(dest, w.Root), destination))
+				err := os.RemoveAll(destPath)
 				
 				if err != nil {
 					log.Println("error sync: ", err)
