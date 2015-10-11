@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 	"path/filepath"
-	"github.com/btfidelis/gync/model"
 	"github.com/btfidelis/gync/core"
 )
 
@@ -54,7 +53,6 @@ func (w *Watcher) walkCheck(path string, info os.FileInfo, err error) error {
 	}
 
 	if ! w.ModTimes[path].Equal(info.ModTime()) {
-		fmt.Println(info.Name(), "coping files :", path)
 		fmt.Println(w.ModFiles, "path: ", path, " modified")	
 		w.ModTimes[path] = info.ModTime()
 		
@@ -76,12 +74,9 @@ func (w *Watcher) walkPopulate(path string, info os.FileInfo, err error) error {
 	return err
 }
 
-func (w *Watcher) ObserveDir(save model.Save) {
-	w.ModTimes = make(map[string]time.Time, 0)
-	
-	error := filepath.Walk(save.Location, w.walkPopulate)
+func (w *Watcher) ObserveDir() {
+	error := filepath.Walk(w.Dir, w.walkPopulate)
 	mirror := new(Watcher)
-	
 	
 	if error != nil {
 		log.Println("ON DAEMON: ", error)
@@ -89,7 +84,7 @@ func (w *Watcher) ObserveDir(save model.Save) {
 	}
 
 	mirror.ModTimes = make(map[string]time.Time, 0)
-	error = filepath.Walk(save.Location, mirror.walkPopulate)
+	error = filepath.Walk(w.Dir, mirror.walkPopulate)
 
 	if error != nil {
 		log.Println("ON DAEMON: ", error)
@@ -97,7 +92,7 @@ func (w *Watcher) ObserveDir(save model.Save) {
 	}
 	
 	for {
-		err := filepath.Walk(save.Location, w.walkCheck)
+		err := filepath.Walk(w.Dir, w.walkCheck)
 		
 		if err != nil {
 			log.Println("ON DAEMON: ", err)
@@ -109,9 +104,8 @@ func (w *Watcher) ObserveDir(save model.Save) {
 }
 
 func (w *Watcher) sync(path string) {
-	// if file was renamed, if file was moved, if file was deleted
-	backup := model.GetConfig().BackupPath
 	fmt.Println("syncing: ", path)
+
 	i, err := os.Stat(path);
 
 	if err != nil {
@@ -121,44 +115,33 @@ func (w *Watcher) sync(path string) {
 
 	if i.IsDir() {
 
-		destination, err := filepath.Rel(w.Dir, path)
-
-		if err != nil {
-			log.Println(err)
-		}
-		
-		if _, err = os.Stat(filepath.Join(filepath.Join(backup, w.Root), destination)); os.IsNotExist(err) {
+		if _, err = os.Stat(w.getDestinationPath(path)); os.IsNotExist(err) {
 		
 			w.ModFiles[path] = NEWDIR
+			fmt.Println("new directory: ", path)
 		} 
 		
 		for dir, _:= range(w.ModTimes) {
 
 			if _,err := os.Stat(dir); os.IsNotExist(err) {
-				fmt.Println("moved or renamed: ", dir)
+				fmt.Println("moved or renamed or deleted: ", dir)
 				delete(w.ModTimes, dir)
 				w.ModFiles[dir] = DELETED
 			}
 		}
 	} else {
-		fmt.Println(w.ModFiles, "path: ", path)
+		fmt.Println(w.ModFiles, "modified: ", path)
 		w.ModFiles[path] = MODIFIED
 	}
 
-	go w.copy(backup)
+	go w.copy()
 
 }
 
-func (w *Watcher) copy(dest string) {
+func (w *Watcher) copy() {
 	for path, val := range(w.ModFiles) {
-
-		relBackupPath, err := filepath.Rel(w.Dir, path)
-
-		if err != nil {
-			log.Println("error sync: ", err)
-		}
 		
-		destPath := filepath.Join(filepath.Join(dest, w.Root), relBackupPath)
+		destPath := w.getDestinationPath(path)
 		
 		switch val {
 			case NEWDIR:
@@ -191,4 +174,14 @@ func (w *Watcher) copy(dest string) {
 
 		delete(w.ModFiles, path)
 	}
+}
+
+func (w *Watcher) getDestinationPath(relPath string) string {
+	relative, err := filepath.Rel(w.Dir, relPath)
+
+	if err != nil {
+		log.Fatal("Invalid backup path: ", err)
+	}
+
+	return filepath.Join(filepath.Join(DROPBOX_LOCAL, w.Root), relative)
 }

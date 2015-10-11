@@ -35,7 +35,7 @@ func main() {
 			Root:	  saveCol.Saves[i].Name,
 		}
 
-		go watch.ObserveDir(saveCol.Saves[i])
+		go watch.ObserveDir()
 	}
 	
 	for {
