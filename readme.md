@@ -6,10 +6,10 @@ Tool for syncing game saves to dropbox.
 
 *This project is under development and at the moment is just a working prototype*
 
-Clone the repository in your go workspace
+Download the source
 
 ```sh
-$ git clone https://github.com/btfidelis/gync.git
+$ go get -d github.com/btfidelis/gync
 ```
 
 Install the dependencies

@@ -7,12 +7,17 @@ import (
 )
 
 var STARTDAEMON bool
+
+// Global Options
 var DROPBOX_LOCAL string
+var CHECK_INTERVAL int
 
 
 func Boot() {
-
-	DROPBOX_LOCAL = model.GetConfig().BackupPath
+	conf := model.GetConfig()
+	
+	DROPBOX_LOCAL = conf.BackupPath
+	CHECK_INTERVAL = conf.CheckInterval
 
 	app := cli.NewApp()
 	app.Name = "Gync"
