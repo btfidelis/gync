@@ -21,7 +21,7 @@ $ go get github.com/crackcomm/go-clitable
 
 Now you should be able to build with
 ```sh
-go build github.com/btfidelis/gync/gync-daemon/gync.go
+go install github.com/btfidelis/gync
 ```
 
 ## Usage
