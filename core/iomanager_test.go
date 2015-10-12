@@ -1,8 +1,10 @@
 package core
 
-import "testing"
-import "fmt"
-import "encoding/json"
+import (
+	"testing"
+	"encoding/json"
+	"os"
+) 
 
 type user struct {
 	Name string
@@ -16,12 +18,11 @@ type collection struct {
 func TestIOManWrite(t *testing.T) {
 	io := NewIOManager("/testing.json")
 
-	u := &user{"Hey", "WuckFaffle"}
+	u := &user{"CoolName", "SomeString"}
 	u1 := &user{"BLHA", "FISH"}
 
 	var col collection
 	col.Elements = append(col.Elements, u, u1)
-
 
 	encoded, err := json.Marshal(col)
 
@@ -39,7 +40,7 @@ func TestLoadFile(t *testing.T) {
 	colBytes := io.LoadFile() 
 
 	if colBytes == nil {
-		return
+		t.Error("File has no contents")
 	}
 	err := json.Unmarshal(colBytes, &col)
 	
@@ -47,7 +48,15 @@ func TestLoadFile(t *testing.T) {
 		t.Errorf("error decoding: ", err)
 	}
 
-	fmt.Println(*col.Elements[0])
+	if col.Elements[0].Name != "CoolName" {
+		t.Errorf("error asserting that %s equals CoolName", col.Elements[0].Name)
+	}
+
+	err = os.Remove("/testing.json")
+
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestCopyFile(t *testing.T) {
