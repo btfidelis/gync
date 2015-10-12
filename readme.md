@@ -16,7 +16,7 @@ Install the dependencies
 
 ```sh
 $ go get github.com/codegangsta/cli
-$ go get github.com/crackcomm/clitable
+$ go get github.com/crackcomm/go-clitable
 ```
 
 Now you should be able to build with
