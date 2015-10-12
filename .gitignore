@@ -1,5 +1,2 @@
-./storage/*
-test.txt
-t/
-gync
+storage/
 config.json
