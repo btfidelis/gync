@@ -25,7 +25,7 @@ go install github.com/btfidelis/gync
 ```
 
 ## Usage
-First, you'll need to configure the dropbox folder you wish to store your savegames do that by coping the config.json.dist file and renaming to config.json
+First, you'll need to configure the dropbox folder you wish to store your savegames do that by copying the config.json.dist file and renaming to config.json
 
 ```sh
 $ cp config.json.dist config.json
