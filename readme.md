@@ -1,6 +1,6 @@
 # Gync
 
-Tool for syncing game saves to dropbox.
+Tool for syncing files to dropbox your folder.
  
 ## Build 
 

@@ -27,15 +27,15 @@ func main() {
 
 	fileWatchers := make([]app.Watcher, len(saveCol.Saves))
 	
-	for i, watch := range(fileWatchers) {
-		watch = app.Watcher{
+	for i, _:= range(fileWatchers) {
+		fileWatchers[i] = app.Watcher{
 			ModTimes: make(map[string]time.Time, 0),
 			ModFiles: make(map[string]int, 0),
 			Dir:	  saveCol.Saves[i].Location,
 			Root:	  saveCol.Saves[i].Name,
 		}
 
-		go watch.ObserveDir()
+		go fileWatchers[i].ObserveDir()
 	}
 	
 	for {
