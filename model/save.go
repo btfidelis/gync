@@ -36,9 +36,11 @@ func NewSave(name string, local string) *Save {
 		return nil
 	}
 
+
 	conf := GetConfig()
 
-	core.InitDirectory(name, conf.BackupPath)
+	io := core.NewIOManager(path.Join(conf.BackupPath, name))
+	io.InitDirectory()
 	core.CopyDirContents(local, path.Join(conf.BackupPath, name))
 
 	return &Save{name, local, file.IsDir()}
@@ -142,4 +144,25 @@ func (saveCol *SaveCollection) Remove(id int) {
 	}
 
 	io.SaveObj(saves)
+}
+
+func CheckSaveFile() {
+	_, err := os.Stat(GetSaveLocal())
+
+	if os.IsNotExist(err) {
+		io := core.NewIOManager(path.Dir(GetSaveLocal()))
+		err := io.InitDirectory()
+
+		if err != nil {
+			log.Fatal("Failed initializing:", err)
+		}
+
+		io.Path = GetSaveLocal()
+
+		err = io.PutEmptyJson()
+		
+		if err != nil {
+			log.Fatal("Failed initializing:", err)
+		}
+	}
 }

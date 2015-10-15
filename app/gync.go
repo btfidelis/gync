@@ -19,12 +19,11 @@ func Boot() {
 	DROPBOX_LOCAL = conf.BackupPath
 	CHECK_INTERVAL = conf.CheckInterval
 
+	model.CheckSaveFile()
+
 	app := cli.NewApp()
 	app.Name = "Gync"
 	app.Usage = "Keep files and directories synced with in real time"
 	app.Commands = RegisterCommands();
 	app.Run(os.Args)
 }
-
-
-

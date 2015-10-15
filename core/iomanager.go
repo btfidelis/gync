@@ -107,23 +107,20 @@ func copyFileContents(srcPath string, destPath string) error {
 	return destFile.Sync()
 }
 
-func (ioMan *IOManager) putEmptyJson(path string) {
-	err := ioutil.WriteFile(path, []byte("{}"), 0600)
+func (ioMan *IOManager) PutEmptyJson() error {
+	err := ioutil.WriteFile(ioMan.GetPath(), []byte("{}"), 0600)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	return err
 }
 
-func InitDirectory(name string, dir string) {
-	if _,err := os.Stat(filepath.Join(dir, name)); os.IsNotExist(err) {
-
-		err := os.MkdirAll(filepath.Join(dir, name), 0777)
+func (ioMan IOManager) InitDirectory() error {
 	
-		if err != nil {
-			log.Fatal("failed to initialize directory: ", err)
-		}
+	if _, err := os.Stat(ioMan.GetPath()); os.IsNotExist(err) {
+		err := os.MkdirAll(ioMan.GetPath(), 0777)	
+		return err
 	}
+
+	return nil
 }
 
 func CopyDirContents(src string, dst string) error {
