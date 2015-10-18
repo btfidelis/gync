@@ -6,6 +6,7 @@ import(
 	"os"
 	"github.com/btfidelis/gync/app"
 	"github.com/btfidelis/gync/model"
+	"github.com/btfidelis/gync/core"
 )
 
 func main() {
@@ -14,6 +15,8 @@ func main() {
 	if !app.STARTDAEMON {
 		os.Exit(0)
 	}
+
+	core.InitNotifyManager()
 
 	saveChange := make(chan bool)
 	saveCol := model.GetSaveCollection()
@@ -38,6 +41,7 @@ func main() {
 		go fileWatchers[i].ObserveDir()
 	}
 	
+
 	for {
 		if <-saveChange {
 			fmt.Println("Please restart the deamon if you want to commit the changes")

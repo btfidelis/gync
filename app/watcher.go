@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	DELETED 	=	iota
-	MODIFIED	=	iota
-	NEWDIR		=   iota
+	DELETED = iota + 1
+	MODIFIED
+	NEWDIR
 )
 
 type Watcher struct {
